@@ -1,0 +1,15 @@
+/Users/user/RiderProjects/дз8/дз8/bin/Debug/net10.0/дз8
+/Users/user/RiderProjects/дз8/дз8/bin/Debug/net10.0/дз8.deps.json
+/Users/user/RiderProjects/дз8/дз8/bin/Debug/net10.0/дз8.runtimeconfig.json
+/Users/user/RiderProjects/дз8/дз8/bin/Debug/net10.0/дз8.dll
+/Users/user/RiderProjects/дз8/дз8/bin/Debug/net10.0/дз8.pdb
+/Users/user/RiderProjects/дз8/дз8/obj/Debug/net10.0/дз8.GeneratedMSBuildEditorConfig.editorconfig
+/Users/user/RiderProjects/дз8/дз8/obj/Debug/net10.0/дз8.AssemblyInfoInputs.cache
+/Users/user/RiderProjects/дз8/дз8/obj/Debug/net10.0/дз8.AssemblyInfo.cs
+/Users/user/RiderProjects/дз8/дз8/obj/Debug/net10.0/дз8.csproj.CoreCompileInputs.cache
+/Users/user/RiderProjects/дз8/дз8/obj/Debug/net10.0/дз8.sourcelink.json
+/Users/user/RiderProjects/дз8/дз8/obj/Debug/net10.0/дз8.dll
+/Users/user/RiderProjects/дз8/дз8/obj/Debug/net10.0/refint/дз8.dll
+/Users/user/RiderProjects/дз8/дз8/obj/Debug/net10.0/дз8.pdb
+/Users/user/RiderProjects/дз8/дз8/obj/Debug/net10.0/дз8.genruntimeconfig.cache
+/Users/user/RiderProjects/дз8/дз8/obj/Debug/net10.0/ref/дз8.dll
