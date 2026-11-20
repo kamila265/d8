@@ -1,48 +1,56 @@
 ﻿using System;
+using System.Collections.Generic; // Нужно для Queue
 
 public enum AccountType { Savings, Checking, Credit }
 
+// Новый класс для транзакции
+public class BankTransaction
+{
+    public readonly DateTime Date;
+    public readonly decimal Amount;
+
+    public BankTransaction(decimal amount)
+    {
+        Date = DateTime.Now; // Запоминаем текущее время
+        Amount = amount;     // Запоминаем сумму
+    }
+}
+
 public class BankAccount
 {
-    private static int _nextNumber = 1000;
     private string _number;
     private decimal _balance;
-    private AccountType _type;
+    
+    // Очередь транзакций (как в задании)
+    private Queue<BankTransaction> _transactions = new Queue<BankTransaction>();
 
-    // 1. Конструктор по умолчанию
-    public BankAccount()
-    {
-        GenerateNumber();
-    }
-
-    // 2. Конструктор только для баланса
     public BankAccount(decimal initialBalance)
     {
         _balance = initialBalance;
-        GenerateNumber();
+        _number = "ACC-1000";
     }
 
-    // 3. Конструктор только для типа
-    public BankAccount(AccountType type)
+    public void Deposit(decimal amount)
     {
-        _type = type;
-        GenerateNumber();
+        _balance += amount;
+        
+        // Создаем транзакцию и кладем в очередь
+        BankTransaction trans = new BankTransaction(amount);
+        _transactions.Enqueue(trans); 
     }
 
-    // 4. Конструктор для баланса и типа
-    public BankAccount(AccountType type, decimal initialBalance)
+    public bool Withdraw(decimal amount)
     {
-        _type = type;
-        _balance = initialBalance;
-        GenerateNumber();
-    }
-
-    // Метод генерации номера (вызывается внутри каждого конструктора)
-    private void GenerateNumber()
-    {
-        _nextNumber++;
-        _number = "ACC-" + _nextNumber;
-        Console.WriteLine("Создан счет: " + _number);
+        if (_balance >= amount)
+        {
+            _balance -= amount;
+            
+            // Создаем транзакцию (с минусом) и кладем в очередь
+            BankTransaction trans = new BankTransaction(-amount);
+            _transactions.Enqueue(trans);
+            return true;
+        }
+        return false;
     }
 }
 
@@ -50,9 +58,10 @@ class Program
 {
     static void Main()
     {
-        BankAccount acc1 = new BankAccount();
-        BankAccount acc2 = new BankAccount(1500);
-        BankAccount acc3 = new BankAccount(AccountType.Credit);
-        BankAccount acc4 = new BankAccount(AccountType.Savings, 5000);
+        BankAccount acc = new BankAccount(1000);
+        acc.Deposit(500);
+        acc.Withdraw(200);
+        
+        Console.WriteLine("Транзакции добавлены в очередь.");
     }
 }
