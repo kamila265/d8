@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic; // Нужно для Queue
+using System.Collections.Generic;
+using System.IO; // Нужно для работы с файлами
 
-public enum AccountType { Savings, Checking, Credit }
-
-// Новый класс для транзакции
 public class BankTransaction
 {
     public readonly DateTime Date;
@@ -11,32 +9,26 @@ public class BankTransaction
 
     public BankTransaction(decimal amount)
     {
-        Date = DateTime.Now; // Запоминаем текущее время
-        Amount = amount;     // Запоминаем сумму
+        Date = DateTime.Now;
+        Amount = amount;
     }
 }
 
-public class BankAccount
+// Наследуемся от IDisposable, чтобы использовать Dispose
+public class BankAccount : IDisposable 
 {
-    private string _number;
     private decimal _balance;
-    
-    // Очередь транзакций (как в задании)
     private Queue<BankTransaction> _transactions = new Queue<BankTransaction>();
 
     public BankAccount(decimal initialBalance)
     {
         _balance = initialBalance;
-        _number = "ACC-1000";
     }
 
     public void Deposit(decimal amount)
     {
         _balance += amount;
-        
-        // Создаем транзакцию и кладем в очередь
-        BankTransaction trans = new BankTransaction(amount);
-        _transactions.Enqueue(trans); 
+        _transactions.Enqueue(new BankTransaction(amount));
     }
 
     public bool Withdraw(decimal amount)
@@ -44,13 +36,29 @@ public class BankAccount
         if (_balance >= amount)
         {
             _balance -= amount;
-            
-            // Создаем транзакцию (с минусом) и кладем в очередь
-            BankTransaction trans = new BankTransaction(-amount);
-            _transactions.Enqueue(trans);
+            _transactions.Enqueue(new BankTransaction(-amount));
             return true;
         }
         return false;
+    }
+
+    // Тот самый метод Dispose
+    public void Dispose()
+    {
+        // Открываем файл для записи
+        using (StreamWriter writer = new StreamWriter("transactions.txt"))
+        {
+            // Достаем всё из очереди, пока она не опустеет
+            while (_transactions.Count > 0)
+            {
+                BankTransaction t = _transactions.Dequeue();
+                writer.WriteLine("Дата: " + t.Date + " | Сумма: " + t.Amount);
+            }
+        }
+        
+        // Говорим системе не вызывать финализатор
+        GC.SuppressFinalize(this);
+        Console.WriteLine("Все данные сохранены в файл transactions.txt");
     }
 }
 
@@ -61,7 +69,8 @@ class Program
         BankAccount acc = new BankAccount(1000);
         acc.Deposit(500);
         acc.Withdraw(200);
-        
-        Console.WriteLine("Транзакции добавлены в очередь.");
+
+        // Вызываем Dispose вручную, чтобы сохранить в файл
+        acc.Dispose(); 
     }
 }
