@@ -1,64 +1,39 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO; // Нужно для работы с файлами
 
-public class BankTransaction
+class Song
 {
-    public readonly DateTime Date;
-    public readonly decimal Amount;
+    string name;
+    string author;
+    Song prev;
 
-    public BankTransaction(decimal amount)
+    // 1) Конструктор: название и автор. prev = null по умолчанию
+    public Song(string n, string a)
     {
-        Date = DateTime.Now;
-        Amount = amount;
-    }
-}
-
-// Наследуемся от IDisposable, чтобы использовать Dispose
-public class BankAccount : IDisposable 
-{
-    private decimal _balance;
-    private Queue<BankTransaction> _transactions = new Queue<BankTransaction>();
-
-    public BankAccount(decimal initialBalance)
-    {
-        _balance = initialBalance;
+        name = n;
+        author = a;
+        prev = null;
     }
 
-    public void Deposit(decimal amount)
+    // 2) Конструктор: название, автор и предыдущая песня
+    public Song(string n, string a, Song p)
     {
-        _balance += amount;
-        _transactions.Enqueue(new BankTransaction(amount));
+        name = n;
+        author = a;
+        prev = p;
     }
 
-    public bool Withdraw(decimal amount)
+    // ИСПРАВЛЕНИЕ ОШИБКИ: Конструктор без параметров (по умолчанию)
+    public Song()
     {
-        if (_balance >= amount)
-        {
-            _balance -= amount;
-            _transactions.Enqueue(new BankTransaction(-amount));
-            return true;
-        }
-        return false;
+        name = "Неизвестно";
+        author = "Неизвестно";
+        prev = null;
     }
 
-    // Тот самый метод Dispose
-    public void Dispose()
+    // Метод для вывода названия и автора
+    public string Title()
     {
-        // Открываем файл для записи
-        using (StreamWriter writer = new StreamWriter("transactions.txt"))
-        {
-            // Достаем всё из очереди, пока она не опустеет
-            while (_transactions.Count > 0)
-            {
-                BankTransaction t = _transactions.Dequeue();
-                writer.WriteLine("Дата: " + t.Date + " | Сумма: " + t.Amount);
-            }
-        }
-        
-        // Говорим системе не вызывать финализатор
-        GC.SuppressFinalize(this);
-        Console.WriteLine("Все данные сохранены в файл transactions.txt");
+        return name + " - " + author;
     }
 }
 
@@ -66,11 +41,20 @@ class Program
 {
     static void Main()
     {
-        BankAccount acc = new BankAccount(1000);
-        acc.Deposit(500);
-        acc.Withdraw(200);
+        // Создаем первую песню (используем конструктор 1)
+        Song song1 = new Song("Bohemian Rhapsody", "Queen");
 
-        // Вызываем Dispose вручную, чтобы сохранить в файл
-        acc.Dispose(); 
+        // Создаем вторую песню, передавая ссылку на первую (используем конструктор 2)
+        Song song2 = new Song("Imagine", "John Lennon", song1);
+
+        // Тот самый вызов из задания, который вызывал бы ошибку без 3-го конструктора
+        Song mySong = new Song(); 
+
+        // Выводим результат, чтобы убедиться, что всё работает
+        Console.WriteLine("Песня 1: " + song1.Title());
+        Console.WriteLine("Песня 2: " + song2.Title());
+        Console.WriteLine("mySong:  " + mySong.Title()); // Выведет "Неизвестно - Неизвестно"
+        
+        Console.ReadKey();
     }
 }
